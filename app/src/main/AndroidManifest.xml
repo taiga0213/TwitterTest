@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.taiga0213.twittertest" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="f40ce805ca17e36c54a63e099623a7df6b63c5e9" />
+
+        <activity
+            android:name=".TweetListActivity"
+            android:label="@string/title_activity_tweet_list" >
+        </activity>
+        <activity
+            android:name=".SingleTweetActivity"
+            android:label="@string/title_activity_single_tweet" >
+        </activity>
+    </application>
+
+</manifest>
