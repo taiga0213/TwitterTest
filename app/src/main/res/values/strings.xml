@@ -7,5 +7,10 @@
     <string name="title_activity_tweet_list">TweetListActivity</string>
     <string name="empty">empty</string>
     <string name="title_activity_single_tweet">SingleTweetActivity</string>
+    <string name="search_menu_search_text">Search</string>
+    <string name="search_menu_query_hint_text">SearchWord</string>
+    <string name="logout">logpout</string>
+    <string name="tweet">tweet</string>
+    <string name="title_activity_search_list">SearchListActivity</string>
 
 </resources>

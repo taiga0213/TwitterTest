@@ -31,6 +31,13 @@ public class MainActivity extends ActionBarActivity {
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig), new TweetUi(),new TweetComposer());
         setContentView(R.layout.activity_main);
+
+        if (Twitter.getSessionManager().getActiveSession() != null){
+            Intent intent = new Intent(this,TweetListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override

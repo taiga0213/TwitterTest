@@ -31,6 +31,10 @@
             android:name=".SingleTweetActivity"
             android:label="@string/title_activity_single_tweet" >
         </activity>
+        <activity
+            android:name=".SearchListActivity"
+            android:label="@string/title_activity_search_list" >
+        </activity>
     </application>
 
 </manifest>

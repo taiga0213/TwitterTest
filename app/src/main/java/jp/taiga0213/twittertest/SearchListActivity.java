@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -12,34 +13,41 @@ import android.widget.ListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
 import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
 
-import jp.taiga0213.service.HomeTimeline;
+import java.util.List;
+
+import jp.taiga0213.service.TweetsSearch;
 
 
-public class TweetListActivity extends ActionBarActivity implements SearchView.OnQueryTextListener {
+public class SearchListActivity extends ActionBarActivity implements SearchView.OnQueryTextListener{
+
 
     private TweetViewFetchAdapter<CompactTweetView> adapter = new TweetViewFetchAdapter<CompactTweetView>(
-            TweetListActivity.this);
-
-
+            SearchListActivity.this);
     PullToRefreshListView listView;
 
-    HomeTimeline homeTimeline = new HomeTimeline(this);
-
-
+    TweetsSearch tweetsSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_list);
+        setContentView(R.layout.activity_search_list);
 
-        listView = (PullToRefreshListView) findViewById(R.id.listView);
-        listView.setEmptyView(findViewById(R.id.progress));
+        listView = (PullToRefreshListView) findViewById(R.id.searchList);
+        listView.setEmptyView(findViewById(R.id.searchProgress));
 
-        adapter = homeTimeline.createHomeTimeline();
+        tweetsSearch = new TweetsSearch(this,getIntent().getStringExtra("searchWord"));
+
+        adapter = tweetsSearch.search();
+
+        List<Tweet> test = adapter.getTweets();
+        for (Tweet tweet : test){
+            Log.d("02020",tweet.idStr);
+        }
 
         listView.setAdapter(adapter);
 
@@ -58,11 +66,7 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
                 new OldTweetAdd().execute();
             }
         });
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,6 +113,8 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
         intent.putExtra("searchWord",query);
         startActivity(intent);
 
+        finish();
+
         return false;
     }
 
@@ -117,7 +123,7 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
         @Override
         protected Void doInBackground(Void... params) {
 
-            adapter = homeTimeline.addOldHomeTimeline();
+            adapter = tweetsSearch.addOldSearch();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -136,7 +142,7 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
     private class NewTweetAdd extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            adapter = homeTimeline.addNewHomeTimeline();
+            adapter = tweetsSearch.addNewSearch();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -151,5 +157,4 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
 
         }
     }
-
 }
