@@ -32,8 +32,8 @@ public class MainActivity extends ActionBarActivity {
         Fabric.with(this, new Twitter(authConfig), new TweetUi(),new TweetComposer());
         setContentView(R.layout.activity_main);
 
-        if (Twitter.getSessionManager().getActiveSession() != null){
-            Intent intent = new Intent(this,TweetListActivity.class);
+        if (Twitter.getSessionManager().getActiveSession() != null) {
+            Intent intent = new Intent(this, TweetListActivity.class);
             startActivity(intent);
             finish();
         }
@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void success(Result<TwitterSession> result) {
                 // Do something with result, which provides a TwitterSession for making API calls
+
                 Intent intent = new Intent(MainActivity.this,
                         TweetListActivity.class);
                 startActivity(intent);
@@ -74,12 +75,7 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

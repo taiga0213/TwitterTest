@@ -11,24 +11,22 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
 import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
 
+import jp.taiga0213.service.Account;
 import jp.taiga0213.service.HomeTimeline;
 
 
 public class TweetListActivity extends ActionBarActivity implements SearchView.OnQueryTextListener {
 
-    private TweetViewFetchAdapter<CompactTweetView> adapter = new TweetViewFetchAdapter<CompactTweetView>(
-            TweetListActivity.this);
+    private TweetViewFetchAdapter<CompactTweetView> adapter;
 
 
     PullToRefreshListView listView;
 
     HomeTimeline homeTimeline = new HomeTimeline(this);
-
 
 
     @Override
@@ -39,6 +37,9 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
         listView = (PullToRefreshListView) findViewById(R.id.listView);
         listView.setEmptyView(findViewById(R.id.progress));
 
+
+        adapter = new TweetViewFetchAdapter<CompactTweetView>(
+                TweetListActivity.this);
         adapter = homeTimeline.createHomeTimeline();
 
         listView.setAdapter(adapter);
@@ -63,7 +64,6 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -79,12 +79,10 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                Twitter.getSessionManager().clearActiveSession();
+                Account account = new Account();
+                account.Logout(this);
 
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
 
-                finish();
                 return true;
             case R.id.tweet:
                 TweetComposer.Builder builder = new TweetComposer.Builder(this);
@@ -104,9 +102,9 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        Intent intent = new Intent(this,SearchListActivity.class);
+        Intent intent = new Intent(this, SearchListActivity.class);
 
-        intent.putExtra("searchWord",query);
+        intent.putExtra("searchWord", query);
         startActivity(intent);
 
         return false;

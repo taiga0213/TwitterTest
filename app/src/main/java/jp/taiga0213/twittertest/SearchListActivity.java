@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
@@ -20,6 +19,7 @@ import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
 
 import java.util.List;
 
+import jp.taiga0213.service.Account;
 import jp.taiga0213.service.TweetsSearch;
 
 
@@ -83,12 +83,9 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                Twitter.getSessionManager().clearActiveSession();
+                Account account = new Account();
+                account.Logout(this);
 
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-
-                finish();
                 return true;
             case R.id.tweet:
                 TweetComposer.Builder builder = new TweetComposer.Builder(this);
