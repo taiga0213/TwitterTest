@@ -18,18 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by feapar on 2015/01/22.
+ * Created by taiga on 2015/01/22.
  */
 public class HomeTimeline {
-    private static long NEWEST_TWEET_ID;
-    private static long OLDEST_TWEET_ID;
-    private static TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-    private static StatusesService statusesService = twitterApiClient.getStatusesService();
+    private long NEWEST_TWEET_ID;
+    private long OLDEST_TWEET_ID;
+    private static TwitterApiClient twitterApiClient;
+    private static StatusesService statusesService;
     private TweetViewFetchAdapter<CompactTweetView> adapter;
     private List<Long> tweetIds = new ArrayList<Long>();
     private static Context context;
     private static final int TWEET_COUNT = 30;
 
+    /**
+     * @param context
+     */
     public HomeTimeline(Context context) {
         HomeTimeline.context = context;
         NEWEST_TWEET_ID = Long.MIN_VALUE;
@@ -39,16 +42,19 @@ public class HomeTimeline {
         statusesService = twitterApiClient.getStatusesService();
     }
 
-    public TweetViewFetchAdapter<CompactTweetView> createHomeTimeline(){
+    /**
+     * 初回タイムライン取得
+     *
+     * @return
+     */
+    public TweetViewFetchAdapter<CompactTweetView> createHomeTimeline() {
         statusesService.homeTimeline(TWEET_COUNT, null, null, false, false, false,
                 false, new Callback<List<Tweet>>() {
-
                     @Override
                     public void failure(TwitterException exception) {
                         // TODO 自動生成されたメソッド・スタブ
                         Log.e("error", "miss");
                         exception.printStackTrace();
-
                     }
 
                     @Override
@@ -81,13 +87,17 @@ public class HomeTimeline {
                                         exception.printStackTrace();
                                     }
                                 });
-
                     }
                 });
         return adapter;
     }
 
-    public TweetViewFetchAdapter<CompactTweetView> addNewHomeTimeline(){
+    /**
+     * 新規タイムライン追加
+     *
+     * @return
+     */
+    public TweetViewFetchAdapter<CompactTweetView> addNewHomeTimeline() {
         statusesService.homeTimeline(TWEET_COUNT, NEWEST_TWEET_ID, null, false, false, false,
                 false, new Callback<List<Tweet>>() {
 
@@ -95,7 +105,6 @@ public class HomeTimeline {
                     public void failure(TwitterException exception) {
                         // TODO 自動生成されたメソッド・スタブ
                         Log.e("error", "miss");
-
                     }
 
                     @Override
@@ -107,7 +116,6 @@ public class HomeTimeline {
 
                             if (NEWEST_TWEET_ID < tweet.id)
                                 NEWEST_TWEET_ID = tweet.id;
-
                         }
 
                         Log.d("ID:NEW", String.valueOf(NEWEST_TWEET_ID));
@@ -126,16 +134,19 @@ public class HomeTimeline {
                                         exception.printStackTrace();
                                     }
                                 });
-
                         adapter.notifyDataSetChanged();
-
                     }
                 });
         return adapter;
     }
 
-    public TweetViewFetchAdapter<CompactTweetView> addOldHomeTimeline(){
-        statusesService.homeTimeline(TWEET_COUNT, null, OLDEST_TWEET_ID -1, false, false, false,
+    /**
+     * 古いタイムライン追加
+     *
+     * @return
+     */
+    public TweetViewFetchAdapter<CompactTweetView> addOldHomeTimeline() {
+        statusesService.homeTimeline(TWEET_COUNT, null, OLDEST_TWEET_ID - 1, false, false, false,
                 false, new Callback<List<Tweet>>() {
 
                     @Override
@@ -182,7 +193,12 @@ public class HomeTimeline {
         return adapter;
     }
 
-    public TweetViewFetchAdapter<CompactTweetView> clear(){
+    /**
+     * アダプタ初期化
+     *
+     * @return
+     */
+    public TweetViewFetchAdapter<CompactTweetView> clear() {
         adapter = new TweetViewFetchAdapter<CompactTweetView>(HomeTimeline.context);
         adapter.notifyDataSetChanged();
         return adapter;

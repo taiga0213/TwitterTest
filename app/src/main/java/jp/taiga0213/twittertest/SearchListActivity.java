@@ -5,19 +5,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
 import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
-
-import java.util.List;
 
 import jp.taiga0213.service.Account;
 import jp.taiga0213.service.TweetsSearch;
@@ -28,9 +24,9 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
 
     private TweetViewFetchAdapter<CompactTweetView> adapter = new TweetViewFetchAdapter<CompactTweetView>(
             SearchListActivity.this);
-    PullToRefreshListView listView;
+    private PullToRefreshListView listView;
 
-    TweetsSearch tweetsSearch;
+    private TweetsSearch tweetsSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +38,7 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
 
         tweetsSearch = new TweetsSearch(this,getIntent().getStringExtra("searchWord"));
 
-        adapter = tweetsSearch.search();
-
-        List<Tweet> test = adapter.getTweets();
-        for (Tweet tweet : test){
-            Log.d("02020",tweet.idStr);
-        }
+        adapter = tweetsSearch.searchResult();
 
         listView.setAdapter(adapter);
 
@@ -56,13 +47,13 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
         listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                //引き下げ(上);
+                //リスト引き下げ;
                 new NewTweetAdd().execute();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                //引き上げ(下)
+                //リスト引き上げ;
                 new OldTweetAdd().execute();
             }
         });
@@ -71,7 +62,7 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_tweet_list, menu);
+        getMenuInflater().inflate(R.menu.menu_search_list, menu);
         MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(this);
@@ -105,28 +96,26 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        Intent intent = new Intent(this,SearchListActivity.class);
-
-        intent.putExtra("searchWord",query);
-        startActivity(intent);
-
+        TweetsSearch tweetsSearch = new TweetsSearch();
+        tweetsSearch.executeSearch(this,query);
         finish();
 
         return false;
     }
 
 
+    /**
+     * 古い検索結果表示
+     */
     private class OldTweetAdd extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
             adapter = tweetsSearch.addOldSearch();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -136,6 +125,9 @@ public class SearchListActivity extends ActionBarActivity implements SearchView.
         }
     }
 
+    /**
+     * 新規検索結果表示
+     */
     private class NewTweetAdd extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {

@@ -20,17 +20,14 @@ import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
 
 import jp.taiga0213.service.Account;
 import jp.taiga0213.service.HomeTimeline;
+import jp.taiga0213.service.TweetsSearch;
 
 
 public class TweetListActivity extends ActionBarActivity implements SearchView.OnQueryTextListener {
 
     private TweetViewFetchAdapter<CompactTweetView> adapter;
-
-
-    PullToRefreshListView listView;
-
-    HomeTimeline homeTimeline = new HomeTimeline(this);
-
+    private PullToRefreshListView listView;
+    private HomeTimeline homeTimeline = new HomeTimeline(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,33 +43,27 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
         adapter = homeTimeline.createHomeTimeline();
 
         listView.setAdapter(adapter);
-
         listView.setMode(PullToRefreshBase.Mode.BOTH);
-
         listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                //引き下げ(上);
+                //リスト引き下げ;
                 new NewTweetAdd().execute();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                //引き上げ(下)
+                //リスト引き上げ
                 new OldTweetAdd().execute();
             }
         });
-
-        Toast.makeText(this,Twitter.getSessionManager().getActiveSession().getUserName(),Toast.LENGTH_SHORT ).show();
-
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_tweet_list, menu);
+
         MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(this);
@@ -87,14 +78,12 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
                 Account account = new Account();
                 account.Logout(this);
 
-
                 return true;
             case R.id.tweet:
                 TweetComposer.Builder builder = new TweetComposer.Builder(this);
-
                 builder.show();
-                return true;
 
+                return true;
         }
         return false;
     }
@@ -107,15 +96,15 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        Intent intent = new Intent(this, SearchListActivity.class);
-
-        intent.putExtra("searchWord", query);
-        startActivity(intent);
+        TweetsSearch tweetsSearch = new TweetsSearch();
+        tweetsSearch.executeSearch(this,query);
 
         return false;
     }
 
-
+    /**
+     * 古いツイート表示
+     */
     private class OldTweetAdd extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -126,7 +115,6 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -136,6 +124,9 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
         }
     }
 
+    /**
+     * 新規ツイート表示
+     */
     private class NewTweetAdd extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
