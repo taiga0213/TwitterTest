@@ -23,8 +23,8 @@ import java.util.List;
 public class HomeTimeline {
     private static long NEWEST_TWEET_ID;
     private static long OLDEST_TWEET_ID;
-    private static final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-    private static final StatusesService statusesService = twitterApiClient.getStatusesService();
+    private static TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+    private static StatusesService statusesService = twitterApiClient.getStatusesService();
     private TweetViewFetchAdapter<CompactTweetView> adapter;
     private List<Long> tweetIds = new ArrayList<Long>();
     private static Context context;
@@ -35,6 +35,8 @@ public class HomeTimeline {
         NEWEST_TWEET_ID = Long.MIN_VALUE;
         OLDEST_TWEET_ID = Long.MAX_VALUE;
         adapter = new TweetViewFetchAdapter<CompactTweetView>(HomeTimeline.context);
+        twitterApiClient = TwitterCore.getInstance().getApiClient();
+        statusesService = twitterApiClient.getStatusesService();
     }
 
     public TweetViewFetchAdapter<CompactTweetView> createHomeTimeline(){

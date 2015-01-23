@@ -5,12 +5,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
 import com.twitter.sdk.android.tweetui.TweetViewFetchAdapter;
@@ -59,6 +62,8 @@ public class TweetListActivity extends ActionBarActivity implements SearchView.O
                 new OldTweetAdd().execute();
             }
         });
+
+        Toast.makeText(this,Twitter.getSessionManager().getActiveSession().getUserName(),Toast.LENGTH_SHORT ).show();
 
 
     }

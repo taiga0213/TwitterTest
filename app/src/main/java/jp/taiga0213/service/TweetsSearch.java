@@ -25,8 +25,8 @@ import java.util.List;
 public class TweetsSearch {
     private static long NEWEST_TWEET_ID;
     private static long OLDEST_TWEET_ID;
-    private static final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-    private static final SearchService searchService = twitterApiClient.getSearchService();
+    private static TwitterApiClient twitterApiClient;
+    private static SearchService searchService;
     private TweetViewFetchAdapter<CompactTweetView> adapter;
     private List<Long> tweetIds = new ArrayList<Long>();
     private static Context context;
@@ -42,6 +42,8 @@ public class TweetsSearch {
         NEWEST_TWEET_ID = Long.MIN_VALUE;
         OLDEST_TWEET_ID = Long.MAX_VALUE;
         adapter = new TweetViewFetchAdapter<CompactTweetView>(TweetsSearch.context);
+        twitterApiClient = TwitterCore.getInstance().getApiClient();
+        searchService = twitterApiClient.getSearchService();
     }
 
     public TweetViewFetchAdapter<CompactTweetView> search() {
